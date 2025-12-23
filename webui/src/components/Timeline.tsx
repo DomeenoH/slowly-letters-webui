@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { format } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
 import clsx from 'clsx';
 import type { Letter } from '../models';
 import { ArrowUpRight, ArrowDownLeft, Inbox, Search, X, Image as ImageIcon } from 'lucide-react';

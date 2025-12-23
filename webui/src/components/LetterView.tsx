@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import type { Letter } from '../models';
-import { Clock, Image as ImageIcon, Languages, ArrowLeft, X as CloseIcon } from 'lucide-react';
+import { Clock, Languages, X as CloseIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface LetterViewProps {
