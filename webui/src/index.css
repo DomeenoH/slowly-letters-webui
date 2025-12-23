@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Merriweather", serif;
+  --font-sans: "Inter", sans-serif;
+  --color-paper: #fdfbf7;
+  --color-ink: #2d2d2d;
+}
+
+@layer base {
+  body {
+    background-color: #f8f6f2;
+    /* Slightly warmer gray for the outer background */
+    color: #2d2d2d;
+    font-family: "Inter", sans-serif;
+    @apply antialiased;
+  }
+}
+
+/* Typography Enhancements */
+.prose-premium {
+  font-family: "Merriweather", serif;
+  line-height: 1.9;
+  letter-spacing: -0.003em;
+  color: #373737;
+}
+
+.prose-premium p {
+  margin-bottom: 1.8em;
+}
+
+.prose-premium blockquote {
+  font-style: italic;
+  border-left: 2px solid #e5e7eb;
+  padding-left: 1.5rem;
+  color: #6b7280;
+}
+
+/* Paper Container */
+.paper-sheet {
+  background-color: #fdfbf7;
+  background-image: radial-gradient(#6b7280 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+  background-attachment: local;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 10px 40px rgba(0, 0, 0, 0.03);
+}
+
+.paper-sheet::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+/* Utility Classes */
+.font-serif {
+  font-family: "Merriweather", serif;
+}
+
+.bg-paper {
+  background-color: #fdfbf7;
+}
+
+.text-ink {
+  color: #2d2d2d;
+}
