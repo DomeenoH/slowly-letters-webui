@@ -34,7 +34,7 @@
 在此步骤，你需要做“写前准备”，而不是直接写信。
 
 1.  **Memory Sync (状态核对)**:
-    *   **User Check**: 检查 `System/Domino_Profile_Master.md`，确认 Domino 当前的 [Time-Sensitive Status] (如：牙痛好了吗？项目进度？)。
+    *   **User Check**: 检查 `System/Domino_Profile_Master.md`，确认 Domino 当前的 [Time-Sensitive Status] (如：最新健康状况、项目里程碑)。
     *   **PenPal Check**: 提取信中可能改变 `Relationship_State.md` 的新信息（新工作、搬家、旅行计划），列出 **Update Log**。
 2.  **Context Harvesting (近期动态横向扫描)**:
     *   **Logic**: 检查在**给当前笔友发出的上一封信之后**，我是否给**其他笔友**写过信？
