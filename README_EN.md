@@ -8,16 +8,32 @@
 
 This project is not just a UI; it is a **full-stack digital heritage workflow** for Slowly users. It transforms your static letter backups into a living, searchable, and bilingual digital archive.
 
+## 📁 Project Structure
+
+```
+slowly/
+├── PenPals/              # Pen pal data storage
+│   └── <FriendName>/
+│       ├── messages/     # Letter source (Markdown)
+│       └── attachments/  # Photo/audio attachments
+├── System/               # System config and prompt templates
+├── scripts/              # Standalone scripts (scraper, etc.)
+└── webui/                # Web visualization interface
+    ├── scripts/          # Data processing scripts
+    ├── src/              # React frontend source
+    └── public/data/      # Generated JSON data
+```
+
 ## ✨ Features
 
-### 🤖 Intelligent Agent Workflow (`/scripts`)
+### 🤖 Intelligent Agent Workflow (`webui/scripts/`)
 The core of this project is an automated agentic script (`parse_letters.ts`) that acts as your personal archivist:
 - **ETL Processing**: Parses raw Slowly markdown exports into structured JSON data.
 - **AI Translation**: Automatically translates English letters to Chinese (or your preferred language) using LLMs (e.g., Qwen 2.5), maintaining the original tone.
 - **Media Sync**: Automatically detects, downloads, and archives attached photos and audio from letters to your local machine.
 - **Smart Caching**: Caches translations to save API costs and time on subsequent runs.
 
-### 🎨 Modern Web Visualization (`/src`)
+### 🎨 Modern Web Visualization (`webui/src/`)
 A beautiful, responsive web interface to browse your correspondence:
 - **Timeline View**: Visualizes your relationship history on an interactive timeline.
 - **Bilingual Toggle**: Instantly switch between original and translated content.
@@ -30,8 +46,8 @@ Even if you don't have personal data, you can experience the project immediately
 
 ### 1. Installation
 ```bash
-git clone https://github.com/DomeenoH/slowly-letters-webui.git
-cd slowly-letters-webui
+git clone https://github.com/DomeenoH/slowly-letters.git
+cd slowly-letters/webui
 npm install
 ```
 
@@ -57,10 +73,11 @@ Open your browser at `http://localhost:5173`. You will see a demo conversation s
 
 To use this with your actual Slowly letters:
 
-1. **Export Data**: Export your letters from Slowly (Markdown format) and place them in a folder structure relative to this repo (e.g., `../PenPals/<FriendName>/messages/<FriendName>.md`). *Note: You may need to adjust the `PENPALS_DIR` path in `scripts/parse_letters.ts` to match your directory structure.*
-2. **Configure AI**: Ensure your `.env` has a valid API key for translation.
+1. **Export Data**: Export your letters from Slowly (Markdown format) and place them in the folder structure (e.g., `PenPals/<FriendName>/messages/<FriendName>.md`). *Note: You may need to adjust the `PENPALS_DIR` path in `webui/scripts/parse_letters.ts` to match your directory structure.*
+2. **Configure AI**: Ensure your `webui/.env` has a valid API key for translation.
 3. **Run the Agent**:
    ```bash
+   cd webui
    npx tsx scripts/parse_letters.ts
    ```
    This will:

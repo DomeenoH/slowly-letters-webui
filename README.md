@@ -8,16 +8,32 @@
 
 这个项目不仅仅是一个 UI 界面，它是一套为 Slowly 用户打造的**全栈数字遗产工作流**。它将你静态的信件备份转化为一个鲜活的、可搜索的、双语对照的数字档案。
 
+## 📁 项目结构
+
+```
+slowly/
+├── PenPals/              # 笔友数据存储目录
+│   └── <笔友名>/
+│       ├── messages/     # 信件原文 (Markdown)
+│       └── attachments/  # 图片/音频附件
+├── System/               # 系统配置和 Prompt 模板
+├── scripts/              # 独立脚本 (爬虫等)
+└── webui/                # Web 可视化界面
+    ├── scripts/          # 数据处理脚本
+    ├── src/              # React 前端源码
+    └── public/data/      # 生成的 JSON 数据
+```
+
 ## ✨ 核心特性
 
-### 🤖 智能体工作流 (Agentic Workflow) - `/scripts`
+### 🤖 智能体工作流 (Agentic Workflow) - `webui/scripts/`
 项目的核心是一个自动化的智能体脚本 (`parse_letters.ts`)，它就像你的私人档案管理员：
 - **ETL 数据处理**: 解析 Slowly 原始的 Markdown 导出文件，转化为结构化的 JSON 数据。
 - **AI 智能翻译**: 使用大语言模型（如 Qwen 2.5）自动将英文信件翻译为中文，保持原本的语气和情感。
 - **媒体同步**: 自动检测信件中的图片和音频附件，并将其下载归档到本地。
 - **智能缓存**: 缓存已翻译的内容，避免重复消耗 API 额度和时间。
 
-### 🎨 现代化 Web 可视化 (Web Visualization) - `/src`
+### 🎨 现代化 Web 可视化 (Web Visualization) - `webui/src/`
 一个精美、响应式的网页界面，用于浏览你的信件历史：
 - **时间轴视图**: 在交互式时间轴上回顾你们的书信往来历史。
 - **双语对照**: 一键在原文和译文之间切换。
@@ -30,8 +46,8 @@
 
 ### 1. 安装
 ```bash
-git clone https://github.com/DomeenoH/slowly-letters-webui.git
-cd slowly-letters-webui
+git clone https://github.com/DomeenoH/slowly-letters.git
+cd slowly-letters/webui
 npm install
 ```
 
@@ -57,11 +73,12 @@ npm run dev
 
 如果你想导入真实的 Slowly 信件：
 
-1. **导出数据**: 从 Slowly 导出信件（Markdown 格式），并按照一定的目录结构放置在本项目同级目录中（例如 `../PenPals/<笔友名>/messages/<笔友名>.md`）。
-   *注意：你可能需要调整 `scripts/parse_letters.ts` 中的 `PENPALS_DIR` 路径以匹配你的实际目录结构。*
-2. **配置 AI**: 确保 `.env` 中填写了有效的 API Key 用于翻译。
+1. **导出数据**: 从 Slowly 导出信件（Markdown 格式），并按照一定的目录结构放置（例如 `PenPals/<笔友名>/messages/<笔友名>.md`）。
+   *注意：你可能需要调整 `webui/scripts/parse_letters.ts` 中的 `PENPALS_DIR` 路径以匹配你的实际目录结构。*
+2. **配置 AI**: 确保 `webui/.env` 中填写了有效的 API Key 用于翻译。
 3. **运行智能体**:
    ```bash
+   cd webui
    npx tsx scripts/parse_letters.ts
    ```
    该脚本将会：
