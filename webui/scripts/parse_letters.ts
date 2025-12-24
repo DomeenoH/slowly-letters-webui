@@ -99,18 +99,26 @@ const syncAttachment = async (
 
         // 2. Determine Filename
         const dateStr = formatDateForFilename(timestamp);
-        // Basic URL extension extraction
-        const urlObj = new URL(url);
-        let ext = path.extname(urlObj.pathname);
-        if (!ext || ext.length > 5) ext = ".jpg"; // Fallback
+
+        // Extract extension
+        let ext = ".jpg";
+        if (url.startsWith('http')) {
+            const urlObj = new URL(url);
+            ext = path.extname(urlObj.pathname);
+        } else {
+            ext = path.extname(url);
+        }
+        if (!ext || ext.length > 5) ext = ".jpg";
 
         const filename = `${dateStr}_${sender}_to_${receiver}_img${index}${ext}`
             .replace(/\s+/g, '_')
             .replace(/\//g, '-');
 
         // 3. Define Paths
-        const archiveDir = path.join(PENPALS_DIR, penPalName, 'attachments');
+        const penPalBaseDir = path.join(PENPALS_DIR, penPalName);
+        const archiveDir = path.join(penPalBaseDir, 'attachments');
         const publicDir = path.join(PUBLIC_IMG_BASE, penPalName);
+        const messagesDir = path.join(penPalBaseDir, 'messages');
 
         // Ensure directories exist
         if (!fs.existsSync(archiveDir)) fs.mkdirSync(archiveDir, { recursive: true });
@@ -119,23 +127,45 @@ const syncAttachment = async (
         const archivePath = path.join(archiveDir, filename);
         const publicPath = path.join(publicDir, filename);
 
-        // 4. Check Archive and Download if missing
-        if (!fs.existsSync(archivePath)) {
-            console.log(`Downloading new attachment: ${filename}`);
-            try {
-                await downloadFile(url, archivePath);
-            } catch (dlErr) {
-                console.error(`Download failed for ${url}:`, dlErr);
-                return null; // Fallback to remote
+        // 4. Source handling
+        if (url.startsWith('http')) {
+            if (!fs.existsSync(archivePath)) {
+                console.log(`Downloading new attachment: ${filename}`);
+                try {
+                    await downloadFile(url, archivePath);
+                } catch (dlErr) {
+                    console.error(`Download failed for ${url}:`, dlErr);
+                    return null;
+                }
+            }
+        } else {
+            // Local path - could be relative to messagesDir
+            const localSource = path.resolve(messagesDir, url);
+            if (fs.existsSync(localSource)) {
+                // If the file exists at the source but not at archive, copy it (standardizing name)
+                if (!fs.existsSync(archivePath)) {
+                    // Check if it's already in the archive folder with the SAME name
+                    const alreadyInArchive = path.resolve(archiveDir, path.basename(url));
+                    if (alreadyInArchive === archivePath) {
+                        // Already named correctly and in archive
+                    } else {
+                        console.log(`Copying local attachment to archive: ${filename}`);
+                        fs.copyFileSync(localSource, archivePath);
+                    }
+                }
+            } else {
+                console.error(`Local attachment not found: ${localSource}`);
+                return null;
             }
         }
 
         // 5. Sync to Public (WebUI accessible)
+        // If it's already in archive (either by download or copy), ensure it's in public
         if (fs.existsSync(archivePath) && !fs.existsSync(publicPath)) {
             fs.copyFileSync(archivePath, publicPath);
         }
 
-        // Only return local path if it actually exists now
+        // Final check
         if (fs.existsSync(publicPath)) {
             return `/images/letters/${penPalName}/${filename}`;
         }
@@ -143,7 +173,7 @@ const syncAttachment = async (
 
     } catch (e) {
         console.error(`Failed to sync attachment ${url}:`, e);
-        return null; // Return null to fallback to remote URL
+        return null;
     }
 };
 
@@ -228,6 +258,8 @@ const processPenPal = async (name: string): Promise<Letter[]> => {
     let count = 0;
 
     while ((match = letterRegex.exec(content)) !== null) {
+        console.log(`Found letter: ${match[1]}`); // DEBUG LOG
+        count++;
         count++;
         const dateStr = match[1];
         let rawBody = match[2].trim();
@@ -242,12 +274,12 @@ const processPenPal = async (name: string): Promise<Letter[]> => {
         const timestamp = parseDate(dateStr);
 
         // 2. Extract Attachments
-        const attachmentMatches = [...fullMatchBody.matchAll(/!\[.*?\]\((.*?)\)|\[(图|音频)\d+\]\s*(https?:\/\/\S+)/g)];
+        const attachmentMatches = [...fullMatchBody.matchAll(/!\[.*?\]\((.*?)\)|\[(图|音频)\d+\]\s*([^ \n]+)/g)];
         const urls = new Set<string>();
 
         for (const m of attachmentMatches) {
             if (m[1]) urls.add(m[1]); // Markdown image URL
-            if (m[3]) urls.add(m[3]); // Scraper format URL
+            if (m[3]) urls.add(m[3]); // Scraper format URL / Local path
         }
 
         // 3. Sync/Download Attachments
