@@ -11,7 +11,7 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ penPals, selectedPenPal, onSelect, letters }) => {
     return (
-        <aside className="w-64 border-r border-stone-200 h-screen bg-stone-50 flex flex-col shrink-0">
+        <aside className="w-full md:w-64 border-r border-stone-200 h-screen bg-stone-50 flex flex-col shrink-0 pb-20 md:pb-0">
             <div className="p-6">
                 <h1 className="text-2xl font-serif font-bold text-ink">慢慢来</h1>
                 <p className="text-xs text-stone-500 mt-1 uppercase tracking-tighter">Slowly Letters Archive</p>

@@ -8,9 +8,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface LetterViewProps {
     letter: Letter | null;
+    onBack?: () => void;
 }
 
-export const LetterView: React.FC<LetterViewProps> = ({ letter }) => {
+export const LetterView: React.FC<LetterViewProps> = ({ letter, onBack }) => {
     const [showTranslation, setShowTranslation] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -21,7 +22,7 @@ export const LetterView: React.FC<LetterViewProps> = ({ letter }) => {
                     <div className="w-20 h-20 border-2 border-stone-200 rounded-full flex items-center justify-center mx-auto mb-6 opacity-30">
                         <Languages size={28} />
                     </div>
-                    <p className="font-serif text-xl italic tracking-widest text-stone-400">挑选一封信，静心阅读</p>
+                    <p className="font-serif text-xl italic tracking-widest text-stone-400 px-6 text-center">挑选一封信，静心阅读</p>
                 </div>
             </main>
         );
@@ -29,25 +30,32 @@ export const LetterView: React.FC<LetterViewProps> = ({ letter }) => {
 
     return (
         <main className="flex-1 h-screen overflow-y-auto bg-[#f8f6f2] selection:bg-teal-100/50">
-            <div className="min-h-full py-12 px-6 flex flex-col items-center">
+            <div className="min-h-full py-6 md:py-12 px-4 md:px-6 flex flex-col items-center">
 
                 {/* Fixed Top Controls */}
-                <div className="w-full max-w-3xl flex justify-between items-center mb-8 px-4">
+                <div className="w-full max-w-3xl flex justify-between items-center mb-6 md:mb-8 px-2 md:px-4">
                     <div className="flex items-center gap-4 text-stone-500">
+                        {onBack && (
+                            <button
+                                onClick={onBack}
+                                className="md:hidden p-2 -ml-2 hover:bg-stone-200 rounded-full transition-colors flex items-center gap-1 text-stone-600"
+                            >
+                                <CloseIcon size={20} className="rotate-90" />
+                                <span className="text-xs font-bold">返回</span>
+                            </button>
+                        )}
                         <span className="text-[10px] font-bold tracking-[0.2em] uppercase">
                             {letter.direction === 'in' ? '收到' : '寄出'}
                         </span>
                     </div>
-
-
                 </div>
 
                 {/* The Paper Sheet */}
-                <div className="w-full max-w-3xl paper-sheet relative px-12 py-20 rounded-sm mb-20 min-h-[80vh]">
+                <div className="w-full max-w-3xl paper-sheet relative px-6 md:px-12 py-12 md:py-20 rounded-sm mb-12 md:mb-20 min-h-[80vh]">
 
                     {/* Header */}
-                    <header className="mb-20">
-                        <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-6">
+                    <header className="mb-12 md:mb-20">
+                        <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.3em] text-stone-400 uppercase mb-4 md:mb-6">
                             <span>{letter.penPal}</span>
                             <span className="opacity-30">•</span>
                             <span className="flex items-center gap-2">
@@ -56,11 +64,11 @@ export const LetterView: React.FC<LetterViewProps> = ({ letter }) => {
                             </span>
                         </div>
 
-                        <h1 className="font-serif text-3xl md:text-4xl text-ink font-bold leading-tight">
+                        <h1 className="font-serif text-2xl md:text-4xl text-ink font-bold leading-tight">
                             {format(new Date(letter.timestamp), 'yyyy年 MMMM do', { locale: zhCN })}
                         </h1>
 
-                        <div className="mt-8 w-12 h-0.5 bg-stone-200" />
+                        <div className="mt-6 md:mt-8 w-12 h-0.5 bg-stone-200" />
                     </header>
 
                     {/* Content Section */}

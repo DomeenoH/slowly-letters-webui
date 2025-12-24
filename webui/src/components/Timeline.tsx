@@ -24,7 +24,7 @@ export const Timeline: React.FC<TimelineProps> = ({ letters, selectedLetterId, o
     }, [letters, searchQuery]);
 
     return (
-        <section className="w-80 border-r border-stone-200 h-screen overflow-hidden flex flex-col bg-white/50 backdrop-blur-sm shrink-0">
+        <section className="w-full md:w-80 border-r border-stone-200 h-screen overflow-hidden flex flex-col bg-white/50 backdrop-blur-sm shrink-0">
             {/* Header */}
             <div className="bg-white/80 backdrop-blur-md z-10 px-6 pt-8 pb-6 border-b border-stone-100/50">
                 <div className="flex items-center gap-2 text-stone-400 mb-1">
@@ -66,7 +66,7 @@ export const Timeline: React.FC<TimelineProps> = ({ letters, selectedLetterId, o
             </div>
 
             {/* List */}
-            <div className="flex-1 overflow-y-auto divide-y divide-stone-100/50">
+            <div className="flex-1 overflow-y-auto divide-y divide-stone-100/50 pb-24">
                 {filteredLetters.length > 0 ? (
                     filteredLetters.map(letter => (
                         <button
