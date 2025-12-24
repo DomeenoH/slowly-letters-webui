@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # 📧 Process: New Letter Lifecycle
 
 (此文档定义了处理新来信的标准作业程序。当用户提供新信件时，严格按照以下流程执行。)
@@ -8,7 +12,7 @@
 
 ### Step 1: Archive (归档)
 *   **Target**: `/PenPals/[Name]/messages/[Name].md` (这是 Single Source of Truth).
-*   **Action**: 将新信件追加到文件末尾。
+*   **Action**: 将新信件追加到文件末尾（原markdown文件，而不是新建一个append.md）。
     *   **Format**: 必须严格遵守分隔符格式：
         ```text
         === LETTER [YYYY年MM月DD日 HH:mm] ===
@@ -28,7 +32,7 @@
 *   **Storage 2 (WebUI Cache)**:
     *   **Logic**: 计算英文正文(去除附件语法后)的 MD5 Hash。
     *   **Action**: 读取 `webui/scripts/translation_cache.json`，插入键值对 `{"MD5_HASH": "Translated_Content"}`，并写回文件。
-*   **Display**: 在聊天框中通过引用块展示翻译结果。
+*   **Display**: 编撰architect，展示翻译结果。
 
 ### Step 3: Analyze & Outline (大纲提案)
 在此步骤，你需要做“写前准备”，而不是直接写信。
