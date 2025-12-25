@@ -252,7 +252,7 @@ const processPenPal = async (name: string): Promise<Letter[]> => {
     const content = fs.readFileSync(mdFile, 'utf-8');
     const letters: Letter[] = [];
 
-    const letterRegex = /=== LETTER \d+ \[(.*?)\] ===\s*\n\s*\n([\s\S]*?)(?=\n\s*=== LETTER|\n\s*-{50,}|$)/g;
+    const letterRegex = /=== LETTER(?:\s+\d+)?\s*\[(.*?)\] ===\s*\n([\s\S]*?)(?=\n\s*=== LETTER|\n\s*[—\-]{10,}|$)/g;
 
     let match;
     let count = 0;
@@ -260,14 +260,18 @@ const processPenPal = async (name: string): Promise<Letter[]> => {
     while ((match = letterRegex.exec(content)) !== null) {
         console.log(`Found letter: ${match[1]}`); // DEBUG LOG
         count++;
-        count++;
         const dateStr = match[1];
         let rawBody = match[2].trim();
         const fullMatchBody = match[2]; // Keep original for context checks if needed
 
         // 1. Determine Direction
         let direction: "in" | "out" = "in";
-        if (rawBody.match(/Best,\s*\n*Domino/i) || rawBody.match(/Domino\s*$/)) {
+        if (
+            rawBody.match(/Best,\s*\n*Domino/i) ||
+            rawBody.match(/Domino\s*$/) ||
+            rawBody.match(/Domino\s+\!\[/m) || // Domino followed by image
+            rawBody.match(/À bientôt,\s*\n*Domino/i)
+        ) {
             direction = "out";
         }
 
@@ -290,6 +294,8 @@ const processPenPal = async (name: string): Promise<Letter[]> => {
             const localPath = await syncAttachment(url, name, timestamp, direction, imgIndex);
             if (localPath) {
                 localAttachments.push(localPath);
+                // Replace in body
+                rawBody = rawBody.split(url).join(localPath);
             } else {
                 localAttachments.push(url); // Fallback to remote
             }
@@ -351,4 +357,7 @@ const run = async () => {
     console.log(`Successfully parsed ${allLetters.length} letters with translations to ${OUTPUT_FILE}`);
 };
 
-run();
+run().catch(err => {
+    console.error("FATAL ERROR:", err);
+    process.exit(1);
+});
