@@ -22,7 +22,11 @@ else
     exit 1
 fi
 
-# 2. Build Project
+# 2. Parse Letters (regenerate letters.json from Markdown)
+echo "📜 Parsing letters..."
+npx tsx scripts/parse_letters.ts
+
+# 3. Build Project
 echo "🏗️  Building WebUI..."
 cd "$PROJECT_ROOT"
 npm run build
@@ -44,7 +48,7 @@ HTTP_CODE=$(curl -o /dev/null --silent --head --write-out '%{http_code}\n' "$TES
 
 if [ "$HTTP_CODE" -eq "200" ]; then
     echo "✅ Smoke Test PASSED! (Status: $HTTP_CODE)"
-    echo "🌐 Site is live at http://u.0x0.cat:8001"
+    echo "🌐 Site is live at $PUBLIC_URL"
 else
     echo "⚠️  Smoke Test WARNING: Status $HTTP_CODE"
     echo "   URL: $TEST_URL"

@@ -270,7 +270,11 @@ const processPenPal = async (name: string): Promise<Letter[]> => {
             rawBody.match(/Best,\s*\n*Domino/i) ||
             rawBody.match(/Domino\s*$/) ||
             rawBody.match(/Domino\s+\!\[/m) || // Domino followed by image
-            rawBody.match(/À bientôt,\s*\n*Domino/i)
+            rawBody.match(/Domino\s*\n*📸/m) || // Domino followed by attachments
+            rawBody.match(/À bientôt,\s*\n*Domino/i) ||
+            rawBody.match(/Take care,\s*\n*Domino/i) ||
+            rawBody.match(/Talk soon,\s*\n*Domino/i) ||
+            rawBody.match(/Wish you luck[^]*Domino/i) // "Wish you luck. Take all of it." pattern
         ) {
             direction = "out";
         }
